@@ -208,7 +208,7 @@ export default function CommentPanel({
     );
     try {
       await fetch(`/api/comments/${id}`, {
-        method: "PATCH",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ toggleResolve: true }),
       });
@@ -223,7 +223,7 @@ export default function CommentPanel({
     );
     try {
       await fetch(`/api/comments/${id}`, {
-        method: "PATCH",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ togglePin: true }),
       });

@@ -129,7 +129,7 @@ export default function ABTestPanel({
   const handleSaveMetrics = async (testId: string) => {
     try {
       await fetch(`/api/abtests/${testId}`, {
-        method: "PATCH",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           metrics: {

@@ -86,7 +86,7 @@ export default function ScriptEditor({ script, onUpdate }: ScriptEditorProps) {
       debounceRef.current = setTimeout(async () => {
         try {
           await fetch(endpoint, {
-            method: "PATCH",
+            method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
           });
@@ -198,7 +198,7 @@ export default function ScriptEditor({ script, onUpdate }: ScriptEditorProps) {
     setSaving(true);
     try {
       await fetch(`/api/scripts/${script.id}`, {
-        method: "PATCH",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, sections }),
       });
