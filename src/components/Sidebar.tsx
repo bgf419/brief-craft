@@ -44,10 +44,10 @@ export default function Sidebar({
   const renderClient = (client: Client) => {
     const isActive = client.id === activeClientId;
     return (
-      <button
+      <div
         key={client.id}
         onClick={() => onSelectClient(client.id)}
-        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-150 group ${
+        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-150 group cursor-pointer ${
           isActive
             ? "bg-[#6366f1]/10 border border-[#6366f1]/30 text-[#e5e5e5]"
             : "border border-transparent text-[#999] hover:bg-[#1e1e1e] hover:text-[#e5e5e5]"
@@ -85,7 +85,7 @@ export default function Sidebar({
             fill={client.isFavorite ? "currentColor" : "none"}
           />
         </button>
-      </button>
+      </div>
     );
   };
 
