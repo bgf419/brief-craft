@@ -1,0 +1,195 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  avatar    String?
+  createdAt DateTime @default(now())
+
+  clients      ClientMember[]
+  comments     Comment[]
+  shares       Share[]
+  abTests      ABTest[]
+}
+
+model Client {
+  id         String   @id @default(uuid())
+  name       String
+  logo       String?
+  isFavorite Boolean  @default(false)
+  isArchived Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  members  ClientMember[]
+  projects Project[]
+}
+
+model ClientMember {
+  id       String @id @default(uuid())
+  role     String @default("editor")
+  clientId String
+  userId   String
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([clientId, userId])
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  thumbnail   String?
+  type        String   @default("UGC")
+  tags        String   @default("[]")
+  isArchived  Boolean  @default(false)
+  clientId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  client    Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  scripts   Script[]
+  templates Template[]
+  shares    Share[]
+  abTests   ABTest[]
+}
+
+model Script {
+  id        String   @id @default(uuid())
+  name      String
+  version   Int      @default(1)
+  parentId  String?
+  projectId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project  Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  parent   Script?        @relation("ScriptVersions", fields: [parentId], references: [id])
+  versions Script[]       @relation("ScriptVersions")
+  sections ScriptSection[]
+  comments Comment[]
+}
+
+model ScriptSection {
+  id        String   @id @default(uuid())
+  scriptId  String
+  title     String   @default("")
+  order     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  script Script      @relation(fields: [scriptId], references: [id], onDelete: Cascade)
+  rows   ScriptRow[]
+}
+
+model ScriptRow {
+  id        String   @id @default(uuid())
+  sectionId String
+  order     Int
+  col1      String   @default("")
+  col2      String   @default("")
+  col3      String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  section  ScriptSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  assets   Asset[]
+  comments Comment[]
+}
+
+model Asset {
+  id        String   @id @default(uuid())
+  name      String
+  url       String
+  type      String
+  tags      String   @default("[]")
+  rowId     String?
+  projectId String?
+  timestamp String?
+  note      String?
+  createdAt DateTime @default(now())
+
+  row ScriptRow? @relation(fields: [rowId], references: [id], onDelete: SetNull)
+}
+
+model Comment {
+  id         String   @id @default(uuid())
+  content    String
+  isPinned   Boolean  @default(false)
+  isResolved Boolean  @default(false)
+  parentId   String?
+  scriptId   String?
+  rowId      String?
+  authorId   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  parent   Comment?  @relation("CommentThread", fields: [parentId], references: [id])
+  replies  Comment[] @relation("CommentThread")
+  script   Script?   @relation(fields: [scriptId], references: [id], onDelete: Cascade)
+  row      ScriptRow? @relation(fields: [rowId], references: [id], onDelete: Cascade)
+  author   User      @relation(fields: [authorId], references: [id])
+}
+
+model Template {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  structure   String
+  projectId   String?
+  isGlobal    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  project Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+}
+
+model Share {
+  id          String   @id @default(uuid())
+  projectId   String
+  userId      String?
+  email       String?
+  accessLevel String   @default("view")
+  password    String?
+  linkToken   String?  @unique
+  clientView  Boolean  @default(false)
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User?   @relation(fields: [userId], references: [id])
+}
+
+model ABTest {
+  id         String   @id @default(uuid())
+  name       String
+  scriptIds  String
+  projectId  String
+  status     String   @default("draft")
+  startDate  DateTime?
+  endDate    DateTime?
+  roas       Float?
+  ctr        Float?
+  cvr        Float?
+  spend      Float?
+  revenue    Float?
+  notes      String?
+  platform   String?
+  campaignId String?
+  csvData    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  project  Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  author   User?   @relation(fields: [authorId], references: [id])
+  authorId String?
+}
