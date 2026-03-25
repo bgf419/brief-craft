@@ -75,7 +75,7 @@ export default function AIGenerator({
     <Modal isOpen={isOpen} onClose={onClose} title="AI Content Generator" size="lg">
       <div className="space-y-5">
         {/* Tabs */}
-        <div className="flex items-center gap-1 bg-[#1e1e1e] rounded-lg p-0.5">
+        <div className="flex items-center gap-1 bg-[#f8f9fa] rounded-lg p-0.5 border border-[#dadce0]">
           {TABS.map((tab) => (
             <button
               key={tab.key}
@@ -85,8 +85,8 @@ export default function AIGenerator({
               }}
               className={`flex-1 px-3 py-2 rounded-md text-xs font-medium transition-all ${
                 activeTab === tab.key
-                  ? "bg-[#6366f1] text-white"
-                  : "text-[#999] hover:text-[#e5e5e5]"
+                  ? "bg-[#1a73e8] text-white shadow-sm"
+                  : "text-[#5f6368] hover:text-[#202124] hover:bg-[#f1f3f4]"
               }`}
             >
               {tab.label}
@@ -96,7 +96,7 @@ export default function AIGenerator({
 
         {/* Context input */}
         <div>
-          <label className="block text-xs font-medium text-[#999] mb-1.5">
+          <label className="block text-xs font-medium text-[#5f6368] mb-1.5">
             Describe your product or offer
           </label>
           <textarea
@@ -104,7 +104,7 @@ export default function AIGenerator({
             onChange={(e) => setContext(e.target.value)}
             placeholder="e.g., A premium skincare brand targeting women 25-45 who want anti-aging results..."
             rows={4}
-            className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-sm text-[#e5e5e5] placeholder-[#666] resize-none focus:outline-none focus:border-[#6366f1]/50 transition-colors"
+            className="w-full bg-[#f8f9fa] border border-[#dadce0] rounded-lg px-3 py-2.5 text-sm text-[#202124] placeholder-[#80868b] resize-none focus:outline-none focus:border-[#1a73e8] transition-colors"
           />
         </div>
 
@@ -123,31 +123,31 @@ export default function AIGenerator({
         {/* Results */}
         {results.length > 0 && (
           <div className="space-y-2">
-            <p className="text-xs font-medium text-[#999]">
+            <p className="text-xs font-medium text-[#5f6368]">
               {results.length} result{results.length !== 1 ? "s" : ""}
             </p>
             {results.map((result, idx) => (
               <div
                 key={idx}
-                className="flex items-start gap-3 p-3 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg hover:border-[#3a3a3a] transition-colors group"
+                className="flex items-start gap-3 p-3 bg-[#ffffff] border border-[#dadce0] rounded-lg hover:border-[#1a73e8] hover:shadow-sm transition-all group"
               >
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#6366f1]/15 flex items-center justify-center text-[10px] font-bold text-[#818cf8]">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#e8f0fe] flex items-center justify-center text-[10px] font-bold text-[#1a73e8]">
                   {idx + 1}
                 </span>
-                <p className="flex-1 text-sm text-[#e5e5e5] leading-relaxed">
+                <p className="flex-1 text-sm text-[#202124] leading-relaxed">
                   {result}
                 </p>
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => copyToClipboard(result)}
-                    className="p-1.5 rounded-md text-[#666] hover:text-[#e5e5e5] hover:bg-[#2a2a2a] transition-colors"
+                    className="p-1.5 rounded-md text-[#80868b] hover:text-[#202124] hover:bg-[#f1f3f4] transition-colors"
                     title="Copy"
                   >
                     <Copy className="h-3.5 w-3.5" />
                   </button>
                   <button
                     onClick={() => handleInsert(result)}
-                    className="p-1.5 rounded-md text-[#666] hover:text-[#6366f1] hover:bg-[#6366f1]/10 transition-colors"
+                    className="p-1.5 rounded-md text-[#80868b] hover:text-[#1a73e8] hover:bg-[#e8f0fe] transition-colors"
                     title="Insert into script"
                   >
                     <ArrowDownToLine className="h-3.5 w-3.5" />
@@ -159,7 +159,7 @@ export default function AIGenerator({
         )}
 
         {loading && (
-          <div className="flex items-center justify-center py-8 gap-2 text-[#666]">
+          <div className="flex items-center justify-center py-8 gap-2 text-[#80868b]">
             <Loader2 className="h-5 w-5 animate-spin" />
             <span className="text-sm">Generating content...</span>
           </div>

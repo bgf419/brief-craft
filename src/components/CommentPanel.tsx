@@ -66,23 +66,23 @@ function CommentBubble({
         comment.isResolved ? "opacity-50" : ""
       }`}
     >
-      <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-[#1e1e1e] transition-colors">
-        <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[#6366f1]/20 flex items-center justify-center text-xs font-bold text-[#818cf8]">
+      <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-[#f1f3f4] transition-colors">
+        <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[#e8f0fe] flex items-center justify-center text-xs font-bold text-[#1a73e8]">
           {comment.authorName.charAt(0)}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-semibold text-[#e5e5e5]">
+            <span className="text-xs font-semibold text-[#202124]">
               {comment.authorName}
             </span>
-            <span className="text-[10px] text-[#666]">
+            <span className="text-[10px] text-[#80868b]">
               {timeAgo(comment.createdAt)}
             </span>
             {comment.isPinned && (
-              <Pin className="h-3 w-3 text-[#f59e0b]" fill="currentColor" />
+              <Pin className="h-3 w-3 text-[#1a73e8]" fill="currentColor" />
             )}
           </div>
-          <p className="text-sm text-[#999] leading-relaxed whitespace-pre-wrap">
+          <p className="text-sm text-[#5f6368] leading-relaxed whitespace-pre-wrap">
             {comment.text}
           </p>
           <div className="flex items-center gap-1 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -90,8 +90,8 @@ function CommentBubble({
               onClick={() => onResolve(comment.id)}
               className={`p-1 rounded text-xs ${
                 comment.isResolved
-                  ? "text-[#22c55e]"
-                  : "text-[#666] hover:text-[#22c55e]"
+                  ? "text-[#188038]"
+                  : "text-[#80868b] hover:text-[#188038]"
               } transition-colors`}
               title={comment.isResolved ? "Unresolve" : "Resolve"}
             >
@@ -101,8 +101,8 @@ function CommentBubble({
               onClick={() => onPin(comment.id)}
               className={`p-1 rounded text-xs ${
                 comment.isPinned
-                  ? "text-[#f59e0b]"
-                  : "text-[#666] hover:text-[#f59e0b]"
+                  ? "text-[#1a73e8]"
+                  : "text-[#80868b] hover:text-[#1a73e8]"
               } transition-colors`}
               title={comment.isPinned ? "Unpin" : "Pin"}
             >
@@ -111,7 +111,7 @@ function CommentBubble({
             {!isReply && (
               <button
                 onClick={() => onReply(comment.id)}
-                className="p-1 rounded text-xs text-[#666] hover:text-[#6366f1] transition-colors"
+                className="p-1 rounded text-xs text-[#80868b] hover:text-[#1a73e8] transition-colors"
                 title="Reply"
               >
                 <MessageSquare className="h-3.5 w-3.5" />
@@ -250,16 +250,16 @@ export default function CommentPanel({
   const unpinned = comments.filter((c) => !c.isPinned);
 
   return (
-    <div className="fixed top-0 right-0 h-full w-96 bg-[#0a0a0a] border-l border-[#2a2a2a] z-40 flex flex-col shadow-2xl animate-in slide-in-from-right duration-200">
+    <div className="fixed top-0 right-0 h-full w-96 bg-[#ffffff] border-l border-[#dadce0] z-40 flex flex-col shadow-lg animate-in slide-in-from-right duration-200">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-[#2a2a2a]">
-        <h3 className="text-sm font-semibold text-[#e5e5e5] flex items-center gap-2">
-          <MessageSquare className="h-4 w-4 text-[#6366f1]" />
+      <div className="flex items-center justify-between px-5 py-4 border-b border-[#dadce0]">
+        <h3 className="text-sm font-semibold text-[#202124] flex items-center gap-2">
+          <MessageSquare className="h-4 w-4 text-[#1a73e8]" />
           Comments
         </h3>
         <button
           onClick={onClose}
-          className="p-1 rounded text-[#666] hover:text-[#e5e5e5] hover:bg-[#1e1e1e] transition-colors"
+          className="p-1 rounded-full text-[#5f6368] hover:text-[#202124] hover:bg-[#f1f3f4] transition-colors"
         >
           <X className="h-4 w-4" />
         </button>
@@ -268,12 +268,12 @@ export default function CommentPanel({
       {/* Comments list */}
       <div className="flex-1 overflow-y-auto px-2 py-3 space-y-1">
         {loading && (
-          <p className="text-center text-xs text-[#666] py-6">
+          <p className="text-center text-xs text-[#80868b] py-6">
             Loading comments...
           </p>
         )}
         {!loading && comments.length === 0 && (
-          <p className="text-center text-xs text-[#666] py-6">
+          <p className="text-center text-xs text-[#80868b] py-6">
             No comments yet. Start a conversation.
           </p>
         )}
@@ -287,7 +287,7 @@ export default function CommentPanel({
           />
         ))}
         {pinned.length > 0 && unpinned.length > 0 && (
-          <div className="border-t border-[#2a2a2a] my-2" />
+          <div className="border-t border-[#dadce0] my-2" />
         )}
         {unpinned.map((c) => (
           <CommentBubble
@@ -301,13 +301,13 @@ export default function CommentPanel({
       </div>
 
       {/* Input */}
-      <div className="border-t border-[#2a2a2a] p-4">
+      <div className="border-t border-[#dadce0] p-4">
         {replyingTo && (
           <div className="flex items-center justify-between mb-2 px-2">
-            <span className="text-xs text-[#666]">Replying to thread</span>
+            <span className="text-xs text-[#5f6368]">Replying to thread</span>
             <button
               onClick={() => setReplyingTo(null)}
-              className="text-xs text-[#666] hover:text-[#e5e5e5]"
+              className="text-xs text-[#5f6368] hover:text-[#202124]"
             >
               Cancel
             </button>
@@ -326,25 +326,25 @@ export default function CommentPanel({
             }}
             placeholder="Add a comment... (@ to mention)"
             rows={2}
-            className="w-full bg-[#141414] border border-[#2a2a2a] rounded-lg px-3 py-2.5 pr-10 text-sm text-[#e5e5e5] placeholder-[#666] resize-none focus:outline-none focus:border-[#6366f1]/50 transition-colors"
+            className="w-full bg-[#f8f9fa] border border-[#dadce0] rounded-lg px-3 py-2.5 pr-10 text-sm text-[#202124] placeholder-[#80868b] resize-none focus:outline-none focus:border-[#1a73e8] transition-colors"
           />
           <button
             onClick={handleSubmit}
             disabled={!input.trim()}
-            className="absolute right-2.5 bottom-2.5 p-1.5 rounded-md text-[#6366f1] hover:bg-[#6366f1]/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="absolute right-2.5 bottom-2.5 p-1.5 rounded-md text-[#1a73e8] hover:bg-[#e8f0fe] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
             <Send className="h-4 w-4" />
           </button>
 
           {showMentions && (
-            <div className="absolute bottom-full left-0 mb-1 w-48 bg-[#141414] border border-[#2a2a2a] rounded-lg shadow-xl overflow-hidden">
+            <div className="absolute bottom-full left-0 mb-1 w-48 bg-[#ffffff] border border-[#dadce0] rounded-lg shadow-lg overflow-hidden">
               {MOCK_USERS.map((user) => (
                 <button
                   key={user.id}
                   onClick={() => insertMention(user.name)}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[#999] hover:bg-[#1e1e1e] hover:text-[#e5e5e5] transition-colors"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[#5f6368] hover:bg-[#f1f3f4] hover:text-[#202124] transition-colors"
                 >
-                  <AtSign className="h-3.5 w-3.5 text-[#6366f1]" />
+                  <AtSign className="h-3.5 w-3.5 text-[#1a73e8]" />
                   {user.name}
                 </button>
               ))}

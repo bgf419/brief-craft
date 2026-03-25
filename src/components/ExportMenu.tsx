@@ -87,7 +87,7 @@ export default function ExportMenu({ scriptId }: ExportMenuProps) {
     <div ref={menuRef} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-[#2a2a2a] text-sm text-[#999] hover:text-[#e5e5e5] hover:border-[#3a3a3a] hover:bg-[#1e1e1e] transition-all"
+        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-[#dadce0] text-sm text-[#5f6368] hover:text-[#202124] hover:border-[#80868b] hover:bg-[#f1f3f4] transition-all"
       >
         <Download className="h-4 w-4" />
         Export
@@ -99,14 +99,14 @@ export default function ExportMenu({ scriptId }: ExportMenuProps) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-1 w-52 bg-[#141414] border border-[#2a2a2a] rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+        <div className="absolute right-0 top-full mt-1 w-52 bg-white border border-[#dadce0] rounded-xl shadow-lg overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150">
           <div className="p-1">
             {EXPORT_OPTIONS.map(({ format, label, icon }) => (
               <button
                 key={format}
                 onClick={() => handleExport(format)}
                 disabled={exporting !== null}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#999] hover:text-[#e5e5e5] hover:bg-[#1e1e1e] transition-colors disabled:opacity-50"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#5f6368] hover:text-[#202124] hover:bg-[#f1f3f4] transition-colors disabled:opacity-50"
               >
                 {exporting === format ? (
                   <Loader2 className="h-4 w-4 animate-spin" />

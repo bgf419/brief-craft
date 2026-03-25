@@ -46,19 +46,19 @@ export default function Modal({
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 transition-opacity"
       onClick={(e) => {
         if (e.target === overlayRef.current) onClose();
       }}
     >
       <div
-        className={`${sizeMap[size] || sizeMap.md} w-full mx-4 bg-[#141414] border border-[#2a2a2a] rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200`}
+        className={`${sizeMap[size] || sizeMap.md} w-full mx-4 bg-white border border-[#dadce0] rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200`}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2a2a]">
-          <h2 className="text-lg font-semibold text-[#e5e5e5]">{title}</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#dadce0]">
+          <h2 className="text-lg font-semibold text-[#202124]">{title}</h2>
           <button
             onClick={onClose}
-            className="p-1 rounded-md text-[#666] hover:text-[#e5e5e5] hover:bg-[#1e1e1e] transition-colors"
+            className="p-1 rounded-md text-[#80868b] hover:text-[#202124] hover:bg-[#f1f3f4] transition-colors"
           >
             <X className="h-5 w-5" />
           </button>

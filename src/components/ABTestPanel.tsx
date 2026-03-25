@@ -46,9 +46,9 @@ interface ABTestPanelProps {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  draft: "bg-[#1e1e1e] text-[#999]",
-  running: "bg-[#f59e0b]/15 text-[#f59e0b]",
-  completed: "bg-[#22c55e]/15 text-[#22c55e]",
+  draft: "bg-[#f1f3f4] text-[#5f6368]",
+  running: "bg-[#fef7e0] text-[#e8710a]",
+  completed: "bg-[#e6f4ea] text-[#137333]",
 };
 
 export default function ABTestPanel({
@@ -189,11 +189,11 @@ export default function ABTestPanel({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed top-0 right-0 h-full w-[520px] bg-[#0a0a0a] border-l border-[#2a2a2a] z-40 flex flex-col shadow-2xl animate-in slide-in-from-right duration-200">
+    <div className="fixed top-0 right-0 h-full w-[520px] bg-white border-l border-[#dadce0] z-40 flex flex-col shadow-xl animate-in slide-in-from-right duration-200">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-[#2a2a2a]">
-        <h3 className="text-sm font-semibold text-[#e5e5e5] flex items-center gap-2">
-          <FlaskConical className="h-4 w-4 text-[#6366f1]" />
+      <div className="flex items-center justify-between px-5 py-4 border-b border-[#dadce0]">
+        <h3 className="text-sm font-semibold text-[#202124] flex items-center gap-2">
+          <FlaskConical className="h-4 w-4 text-[#1a73e8]" />
           A/B Tests
         </h3>
         <div className="flex items-center gap-2">
@@ -207,7 +207,7 @@ export default function ABTestPanel({
           </Button>
           <button
             onClick={onClose}
-            className="p-1 rounded text-[#666] hover:text-[#e5e5e5] hover:bg-[#1e1e1e] transition-colors"
+            className="p-1 rounded text-[#80868b] hover:text-[#202124] hover:bg-[#f1f3f4] transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
@@ -217,23 +217,23 @@ export default function ABTestPanel({
       <div className="flex-1 overflow-y-auto">
         {/* Create form */}
         {showForm && (
-          <div className="p-5 border-b border-[#2a2a2a] space-y-3">
+          <div className="p-5 border-b border-[#dadce0] space-y-3">
             <input
               type="text"
               placeholder="Test name..."
               value={formName}
               onChange={(e) => setFormName(e.target.value)}
-              className="w-full bg-[#141414] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-[#e5e5e5] placeholder-[#666] focus:outline-none focus:border-[#6366f1]/50 transition-colors"
+              className="w-full bg-white border border-[#dadce0] rounded-lg px-3 py-2 text-sm text-[#202124] placeholder-[#80868b] focus:outline-none focus:border-[#1a73e8] transition-colors"
             />
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-[#666] mb-1">
+                <label className="block text-xs text-[#5f6368] mb-1">
                   Script A
                 </label>
                 <select
                   value={formScriptA}
                   onChange={(e) => setFormScriptA(e.target.value)}
-                  className="w-full bg-[#141414] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-[#e5e5e5] focus:outline-none focus:border-[#6366f1]/50"
+                  className="w-full bg-white border border-[#dadce0] rounded-lg px-3 py-2 text-sm text-[#202124] focus:outline-none focus:border-[#1a73e8]"
                 >
                   <option value="">Select...</option>
                   {scripts.map((s) => (
@@ -244,13 +244,13 @@ export default function ABTestPanel({
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-[#666] mb-1">
+                <label className="block text-xs text-[#5f6368] mb-1">
                   Script B
                 </label>
                 <select
                   value={formScriptB}
                   onChange={(e) => setFormScriptB(e.target.value)}
-                  className="w-full bg-[#141414] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-[#e5e5e5] focus:outline-none focus:border-[#6366f1]/50"
+                  className="w-full bg-white border border-[#dadce0] rounded-lg px-3 py-2 text-sm text-[#202124] focus:outline-none focus:border-[#1a73e8]"
                 >
                   <option value="">Select...</option>
                   {scripts.map((s) => (
@@ -262,13 +262,13 @@ export default function ABTestPanel({
               </div>
             </div>
             <div>
-              <label className="block text-xs text-[#666] mb-1">
+              <label className="block text-xs text-[#5f6368] mb-1">
                 Platform
               </label>
               <select
                 value={formPlatform}
                 onChange={(e) => setFormPlatform(e.target.value)}
-                className="w-full bg-[#141414] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-[#e5e5e5] focus:outline-none focus:border-[#6366f1]/50"
+                className="w-full bg-white border border-[#dadce0] rounded-lg px-3 py-2 text-sm text-[#202124] focus:outline-none focus:border-[#1a73e8]"
               >
                 <option>Meta</option>
                 <option>Google</option>
@@ -301,11 +301,11 @@ export default function ABTestPanel({
         <div className="p-5 space-y-3">
           {loading && (
             <div className="flex justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin text-[#666]" />
+              <Loader2 className="h-6 w-6 animate-spin text-[#80868b]" />
             </div>
           )}
           {!loading && tests.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-12 text-[#666]">
+            <div className="flex flex-col items-center justify-center py-12 text-[#80868b]">
               <FlaskConical className="h-10 w-10 mb-3" />
               <p className="text-sm">No A/B tests yet.</p>
             </div>
@@ -313,14 +313,14 @@ export default function ABTestPanel({
           {tests.map((test) => (
             <div
               key={test.id}
-              className="bg-[#141414] border border-[#2a2a2a] rounded-xl p-4 hover:border-[#3a3a3a] transition-colors"
+              className="bg-white border border-[#dadce0] rounded-xl p-4 hover:border-[#80868b] transition-colors"
             >
               <div className="flex items-start justify-between mb-3">
                 <div>
-                  <h4 className="text-sm font-semibold text-[#e5e5e5]">
+                  <h4 className="text-sm font-semibold text-[#202124]">
                     {test.name}
                   </h4>
-                  <p className="text-xs text-[#666] mt-0.5">
+                  <p className="text-xs text-[#5f6368] mt-0.5">
                     {test.platform}
                   </p>
                 </div>
@@ -338,7 +338,7 @@ export default function ABTestPanel({
                 <div className="space-y-2 mb-3">
                   <div className="grid grid-cols-3 gap-2">
                     <div>
-                      <label className="block text-[10px] text-[#666] mb-0.5">
+                      <label className="block text-[10px] text-[#5f6368] mb-0.5">
                         ROAS
                       </label>
                       <input
@@ -346,11 +346,11 @@ export default function ABTestPanel({
                         step="0.01"
                         value={editRoas}
                         onChange={(e) => setEditRoas(e.target.value)}
-                        className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded px-2 py-1 text-xs text-[#e5e5e5] focus:outline-none focus:border-[#6366f1]/50"
+                        className="w-full bg-[#f8f9fa] border border-[#dadce0] rounded px-2 py-1 text-xs text-[#202124] focus:outline-none focus:border-[#1a73e8]"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] text-[#666] mb-0.5">
+                      <label className="block text-[10px] text-[#5f6368] mb-0.5">
                         CTR %
                       </label>
                       <input
@@ -358,11 +358,11 @@ export default function ABTestPanel({
                         step="0.01"
                         value={editCtr}
                         onChange={(e) => setEditCtr(e.target.value)}
-                        className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded px-2 py-1 text-xs text-[#e5e5e5] focus:outline-none focus:border-[#6366f1]/50"
+                        className="w-full bg-[#f8f9fa] border border-[#dadce0] rounded px-2 py-1 text-xs text-[#202124] focus:outline-none focus:border-[#1a73e8]"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] text-[#666] mb-0.5">
+                      <label className="block text-[10px] text-[#5f6368] mb-0.5">
                         CVR %
                       </label>
                       <input
@@ -370,7 +370,7 @@ export default function ABTestPanel({
                         step="0.01"
                         value={editCvr}
                         onChange={(e) => setEditCvr(e.target.value)}
-                        className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded px-2 py-1 text-xs text-[#e5e5e5] focus:outline-none focus:border-[#6366f1]/50"
+                        className="w-full bg-[#f8f9fa] border border-[#dadce0] rounded px-2 py-1 text-xs text-[#202124] focus:outline-none focus:border-[#1a73e8]"
                       />
                     </div>
                   </div>
@@ -393,25 +393,25 @@ export default function ABTestPanel({
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-3 mb-3">
-                  <div className="bg-[#1e1e1e] rounded-lg p-2 text-center">
-                    <p className="text-[10px] text-[#666] mb-0.5">ROAS</p>
-                    <p className="text-sm font-bold text-[#e5e5e5]">
+                  <div className="bg-[#f8f9fa] border border-[#dadce0] rounded-lg p-2 text-center">
+                    <p className="text-[10px] text-[#5f6368] mb-0.5">ROAS</p>
+                    <p className="text-sm font-bold text-[#1a73e8]">
                       {test.metrics.roas != null
                         ? `${test.metrics.roas}x`
                         : "--"}
                     </p>
                   </div>
-                  <div className="bg-[#1e1e1e] rounded-lg p-2 text-center">
-                    <p className="text-[10px] text-[#666] mb-0.5">CTR</p>
-                    <p className="text-sm font-bold text-[#e5e5e5]">
+                  <div className="bg-[#f8f9fa] border border-[#dadce0] rounded-lg p-2 text-center">
+                    <p className="text-[10px] text-[#5f6368] mb-0.5">CTR</p>
+                    <p className="text-sm font-bold text-[#137333]">
                       {test.metrics.ctr != null
                         ? `${test.metrics.ctr}%`
                         : "--"}
                     </p>
                   </div>
-                  <div className="bg-[#1e1e1e] rounded-lg p-2 text-center">
-                    <p className="text-[10px] text-[#666] mb-0.5">CVR</p>
-                    <p className="text-sm font-bold text-[#e5e5e5]">
+                  <div className="bg-[#f8f9fa] border border-[#dadce0] rounded-lg p-2 text-center">
+                    <p className="text-[10px] text-[#5f6368] mb-0.5">CVR</p>
+                    <p className="text-sm font-bold text-[#e8710a]">
                       {test.metrics.cvr != null
                         ? `${test.metrics.cvr}%`
                         : "--"}
@@ -429,20 +429,20 @@ export default function ABTestPanel({
                     setEditCtr(test.metrics.ctr?.toString() || "");
                     setEditCvr(test.metrics.cvr?.toString() || "");
                   }}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs text-[#666] hover:text-[#e5e5e5] hover:bg-[#1e1e1e] transition-colors"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs text-[#5f6368] hover:text-[#202124] hover:bg-[#f1f3f4] transition-colors"
                 >
                   <Pencil className="h-3 w-3" />
                   Edit Metrics
                 </button>
                 <button
                   onClick={() => handleCSVUpload(test.id)}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs text-[#666] hover:text-[#e5e5e5] hover:bg-[#1e1e1e] transition-colors"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs text-[#5f6368] hover:text-[#202124] hover:bg-[#f1f3f4] transition-colors"
                 >
                   <Upload className="h-3 w-3" />
                   Upload CSV
                 </button>
                 <button
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs text-[#666] hover:text-[#6366f1] hover:bg-[#6366f1]/10 transition-colors ml-auto"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs text-[#5f6368] hover:text-[#1a73e8] hover:bg-[#e8f0fe] transition-colors ml-auto"
                 >
                   <BarChart3 className="h-3 w-3" />
                   Details

@@ -22,11 +22,11 @@ interface ProjectGridProps {
 
 const PROJECT_TYPES = ["All", "UGC", "Static", "Concept Test", "Hook Test"];
 
-const typeBadgeColors: Record<string, string> = {
-  UGC: "bg-[#6366f1]/20 text-[#818cf8]",
-  Static: "bg-[#22c55e]/20 text-[#22c55e]",
-  "Concept Test": "bg-[#f59e0b]/20 text-[#f59e0b]",
-  "Hook Test": "bg-[#ef4444]/20 text-[#ef4444]",
+const typeBadgeColors: Record<string, { bg: string; text: string }> = {
+  UGC: { bg: "bg-[#e8f0fe]", text: "text-[#1a73e8]" },
+  Static: { bg: "bg-[#e6f4ea]", text: "text-[#188038]" },
+  "Concept Test": { bg: "bg-[#fef7e0]", text: "text-[#ea8600]" },
+  "Hook Test": { bg: "bg-[#fce8e6]", text: "text-[#d93025]" },
 };
 
 function timeAgo(dateStr: string): string {
@@ -62,29 +62,29 @@ export default function ProjectGrid({
   }, [projects, search, typeFilter]);
 
   return (
-    <div className="flex-1 flex flex-col h-full">
+    <div className="flex-1 flex flex-col h-full bg-[#f8f9fa]">
       {/* Filter bar */}
-      <div className="flex items-center gap-3 px-6 py-4 border-b border-[#2a2a2a]">
+      <div className="flex items-center gap-3 px-6 py-4 border-b border-[#dadce0] bg-white">
         <div className="relative flex-1 max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#666]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#80868b]" />
           <input
             type="text"
             placeholder="Search projects..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#141414] border border-[#2a2a2a] rounded-lg pl-9 pr-3 py-2 text-sm text-[#e5e5e5] placeholder-[#666] focus:outline-none focus:border-[#6366f1]/50 transition-colors"
+            className="w-full bg-[#f1f3f4] border border-[#dadce0] rounded-lg pl-9 pr-3 py-2 text-sm text-[#202124] placeholder-[#80868b] focus:outline-none focus:border-[#1a73e8] focus:bg-white focus:ring-1 focus:ring-[#1a73e8] transition-colors"
           />
         </div>
 
-        <div className="flex items-center gap-1 bg-[#141414] border border-[#2a2a2a] rounded-lg p-0.5">
+        <div className="flex items-center gap-0.5 bg-[#f1f3f4] border border-[#dadce0] rounded-lg p-0.5">
           {PROJECT_TYPES.map((type) => (
             <button
               key={type}
               onClick={() => setTypeFilter(type)}
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                 typeFilter === type
-                  ? "bg-[#6366f1] text-white"
-                  : "text-[#999] hover:text-[#e5e5e5]"
+                  ? "bg-[#1a73e8] text-white shadow-sm"
+                  : "text-[#5f6368] hover:text-[#202124] hover:bg-[#e8eaed]"
               }`}
             >
               {type}
@@ -105,9 +105,12 @@ export default function ProjectGrid({
       {/* Grid */}
       <div className="flex-1 overflow-y-auto p-6">
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-48 text-[#666]">
-            <FileText className="h-10 w-10 mb-3" />
-            <p className="text-sm">No projects found.</p>
+          <div className="flex flex-col items-center justify-center h-48 text-[#80868b]">
+            <div className="w-16 h-16 mb-4 rounded-full bg-[#f1f3f4] flex items-center justify-center">
+              <FileText className="h-8 w-8 text-[#dadce0]" />
+            </div>
+            <p className="text-sm font-medium text-[#5f6368]">No projects found</p>
+            <p className="text-xs text-[#80868b] mt-1">Try adjusting your search or filters</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -118,20 +121,22 @@ export default function ProjectGrid({
               } catch {
                 tags = project.tags ? project.tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
               }
+              const badge = typeBadgeColors[project.type];
               return (
                 <button
                   key={project.id}
                   onClick={() => onSelectProject(project.id)}
-                  className="text-left bg-[#141414] border border-[#2a2a2a] rounded-xl p-4 hover:border-[#3a3a3a] hover:bg-[#1e1e1e] transition-all duration-150 group"
+                  className="text-left bg-white border border-[#dadce0] rounded-xl p-4 hover:shadow-md hover:border-[#1a73e8]/30 transition-all duration-150 group"
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-sm font-semibold text-[#e5e5e5] group-hover:text-white truncate pr-2">
+                    <h3 className="text-sm font-semibold text-[#202124] group-hover:text-[#1a73e8] truncate pr-2">
                       {project.name}
                     </h3>
                     <span
                       className={`flex-shrink-0 px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                        typeBadgeColors[project.type] ||
-                        "bg-[#1e1e1e] text-[#999]"
+                        badge
+                          ? `${badge.bg} ${badge.text}`
+                          : "bg-[#f1f3f4] text-[#5f6368]"
                       }`}
                     >
                       {project.type}
@@ -143,21 +148,21 @@ export default function ProjectGrid({
                       {tags.slice(0, 3).map((tag) => (
                         <span
                           key={tag}
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#1e1e1e] text-[10px] text-[#999]"
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#f1f3f4] text-[10px] text-[#5f6368]"
                         >
                           <Tag className="h-2.5 w-2.5" />
                           {tag}
                         </span>
                       ))}
                       {tags.length > 3 && (
-                        <span className="text-[10px] text-[#666]">
+                        <span className="text-[10px] text-[#80868b]">
                           +{tags.length - 3}
                         </span>
                       )}
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between text-[10px] text-[#666]">
+                  <div className="flex items-center justify-between text-[10px] text-[#80868b]">
                     <span>
                       {project._count?.scripts ?? 0} script
                       {(project._count?.scripts ?? 0) !== 1 ? "s" : ""}

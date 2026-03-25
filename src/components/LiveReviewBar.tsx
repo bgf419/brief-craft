@@ -16,9 +16,9 @@ interface LiveReviewBarProps {
 }
 
 const SIMULATED_USERS = [
-  { name: "Sarah K.", color: "#6366f1" },
-  { name: "Mike R.", color: "#22c55e" },
-  { name: "Jess T.", color: "#f59e0b" },
+  { name: "Sarah K.", color: "#1a73e8" },
+  { name: "Mike R.", color: "#34a853" },
+  { name: "Jess T.", color: "#fbbc04" },
 ];
 
 function formatTime(seconds: number): string {
@@ -83,15 +83,15 @@ export default function LiveReviewBar({
   return (
     <>
       {/* Top bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-2 bg-[#6366f1] text-white shadow-lg">
+      <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-2 bg-white border-b border-[#dadce0] shadow-sm">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
-            <span className="text-xs font-semibold">LIVE REVIEW</span>
+            <div className="w-2 h-2 rounded-full bg-[#34a853] animate-pulse" />
+            <span className="text-xs font-semibold text-[#202124]">LIVE REVIEW</span>
           </div>
 
           {/* Timer */}
-          <div className="flex items-center gap-1.5 text-xs font-mono bg-white/10 rounded-md px-2.5 py-1">
+          <div className="flex items-center gap-1.5 text-xs font-mono text-[#5f6368] bg-[#f1f3f4] rounded-md px-2.5 py-1">
             <Timer className="h-3.5 w-3.5" />
             {formatTime(elapsed)}
           </div>
@@ -99,20 +99,20 @@ export default function LiveReviewBar({
 
         {/* Connected users */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 text-[#5f6368]">
             <Users className="h-3.5 w-3.5" />
             <span className="text-xs">
               {SIMULATED_USERS.length + 1} connected
             </span>
           </div>
           <div className="flex -space-x-2">
-            <div className="w-7 h-7 rounded-full bg-white text-[#6366f1] flex items-center justify-center text-[10px] font-bold border-2 border-[#6366f1] z-10">
+            <div className="w-7 h-7 rounded-full bg-[#1a73e8] text-white flex items-center justify-center text-[10px] font-bold border-2 border-white z-10">
               You
             </div>
             {SIMULATED_USERS.map((user) => (
               <div
                 key={user.name}
-                className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2 border-[#6366f1]"
+                className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2 border-white"
                 style={{ backgroundColor: user.color }}
                 title={user.name}
               >
@@ -125,7 +125,7 @@ export default function LiveReviewBar({
         {/* End button */}
         <button
           onClick={onToggle}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20 text-xs font-medium transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#f1f3f4] hover:bg-[#dadce0] text-xs font-medium text-[#202124] transition-colors"
         >
           <X className="h-3.5 w-3.5" />
           End Review

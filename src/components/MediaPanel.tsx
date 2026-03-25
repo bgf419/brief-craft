@@ -192,26 +192,26 @@ export default function MediaPanel({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed top-0 right-0 h-full w-[480px] bg-[#0a0a0a] border-l border-[#2a2a2a] z-40 flex flex-col shadow-2xl animate-in slide-in-from-right duration-200">
+    <div className="fixed top-0 right-0 h-full w-[480px] bg-white border-l border-[#dadce0] z-40 flex flex-col shadow-2xl animate-in slide-in-from-right duration-200">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-[#2a2a2a]">
-        <h3 className="text-sm font-semibold text-[#e5e5e5]">Media</h3>
+      <div className="flex items-center justify-between px-5 py-4 border-b border-[#dadce0]">
+        <h3 className="text-sm font-semibold text-[#202124]">Media</h3>
         <button
           onClick={onClose}
-          className="p-1 rounded text-[#666] hover:text-[#e5e5e5] hover:bg-[#1e1e1e] transition-colors"
+          className="p-1 rounded text-[#80868b] hover:text-[#202124] hover:bg-[#f1f3f4] transition-colors"
         >
           <X className="h-4 w-4" />
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-[#2a2a2a]">
+      <div className="flex border-b border-[#dadce0]">
         <button
           onClick={() => setTab("videos")}
           className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-medium transition-colors border-b-2 ${
             tab === "videos"
-              ? "border-[#6366f1] text-[#e5e5e5]"
-              : "border-transparent text-[#666] hover:text-[#999]"
+              ? "border-[#1a73e8] text-[#1a73e8]"
+              : "border-transparent text-[#5f6368] hover:text-[#202124]"
           }`}
         >
           <Video className="h-4 w-4" />
@@ -221,8 +221,8 @@ export default function MediaPanel({
           onClick={() => setTab("images")}
           className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-medium transition-colors border-b-2 ${
             tab === "images"
-              ? "border-[#6366f1] text-[#e5e5e5]"
-              : "border-transparent text-[#666] hover:text-[#999]"
+              ? "border-[#1a73e8] text-[#1a73e8]"
+              : "border-transparent text-[#5f6368] hover:text-[#202124]"
           }`}
         >
           <ImageIcon className="h-4 w-4" />
@@ -233,7 +233,7 @@ export default function MediaPanel({
       <div className="flex-1 overflow-y-auto p-5 space-y-4">
         {loading && (
           <div className="flex justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin text-[#666]" />
+            <Loader2 className="h-6 w-6 animate-spin text-[#80868b]" />
           </div>
         )}
 
@@ -243,13 +243,13 @@ export default function MediaPanel({
             {/* Add video */}
             <div className="flex gap-2">
               <div className="relative flex-1">
-                <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#666]" />
+                <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#80868b]" />
                 <input
                   type="text"
                   value={videoUrl}
                   onChange={(e) => setVideoUrl(e.target.value)}
                   placeholder="YouTube, Vimeo, or direct URL..."
-                  className="w-full bg-[#141414] border border-[#2a2a2a] rounded-lg pl-8 pr-3 py-2 text-sm text-[#e5e5e5] placeholder-[#666] focus:outline-none focus:border-[#6366f1]/50 transition-colors"
+                  className="w-full bg-[#f8f9fa] border border-[#dadce0] rounded-lg pl-8 pr-3 py-2 text-sm text-[#202124] placeholder-[#80868b] focus:outline-none focus:border-[#1a73e8] focus:bg-white transition-colors"
                   onKeyDown={(e) => e.key === "Enter" && addVideo()}
                 />
               </div>
@@ -269,7 +269,7 @@ export default function MediaPanel({
               return (
                 <div
                   key={video.id}
-                  className="bg-[#141414] border border-[#2a2a2a] rounded-xl overflow-hidden"
+                  className="bg-[#f8f9fa] border border-[#dadce0] rounded-xl overflow-hidden"
                 >
                   {/* Preview */}
                   <div className="aspect-video bg-black">
@@ -291,12 +291,12 @@ export default function MediaPanel({
 
                   <div className="p-3">
                     <div className="flex items-center justify-between mb-2">
-                      <p className="text-xs text-[#999] truncate flex-1">
+                      <p className="text-xs text-[#5f6368] truncate flex-1">
                         {video.url}
                       </p>
                       <button
                         onClick={() => deleteVideo(video.id)}
-                        className="p-1 rounded text-[#666] hover:text-[#ef4444] transition-colors"
+                        className="p-1 rounded text-[#80868b] hover:text-[#d93025] transition-colors"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
@@ -309,11 +309,11 @@ export default function MediaPanel({
                           key={ann.id}
                           className="flex items-start gap-2 text-xs"
                         >
-                          <span className="flex items-center gap-1 text-[#6366f1] font-mono flex-shrink-0">
+                          <span className="flex items-center gap-1 text-[#1a73e8] font-mono flex-shrink-0">
                             <Clock className="h-3 w-3" />
                             {ann.timestamp}
                           </span>
-                          <span className="text-[#999]">{ann.note}</span>
+                          <span className="text-[#5f6368]">{ann.note}</span>
                         </div>
                       ))}
                     </div>
@@ -328,7 +328,7 @@ export default function MediaPanel({
                               setAnnotationTimestamp(e.target.value)
                             }
                             placeholder="0:00"
-                            className="w-16 bg-[#1e1e1e] border border-[#2a2a2a] rounded px-2 py-1 text-xs text-[#e5e5e5] placeholder-[#666] focus:outline-none focus:border-[#6366f1]/50"
+                            className="w-16 bg-white border border-[#dadce0] rounded px-2 py-1 text-xs text-[#202124] placeholder-[#80868b] focus:outline-none focus:border-[#1a73e8]"
                           />
                           <input
                             type="text"
@@ -337,7 +337,7 @@ export default function MediaPanel({
                               setAnnotationNote(e.target.value)
                             }
                             placeholder="Note..."
-                            className="flex-1 bg-[#1e1e1e] border border-[#2a2a2a] rounded px-2 py-1 text-xs text-[#e5e5e5] placeholder-[#666] focus:outline-none focus:border-[#6366f1]/50"
+                            className="flex-1 bg-white border border-[#dadce0] rounded px-2 py-1 text-xs text-[#202124] placeholder-[#80868b] focus:outline-none focus:border-[#1a73e8]"
                             onKeyDown={(e) =>
                               e.key === "Enter" &&
                               addAnnotation(video.id)
@@ -364,7 +364,7 @@ export default function MediaPanel({
                     ) : (
                       <button
                         onClick={() => setAnnotationVideoId(video.id)}
-                        className="mt-2 flex items-center gap-1.5 text-xs text-[#666] hover:text-[#6366f1] transition-colors"
+                        className="mt-2 flex items-center gap-1.5 text-xs text-[#80868b] hover:text-[#1a73e8] transition-colors"
                       >
                         <Plus className="h-3 w-3" />
                         Add timestamp
@@ -376,7 +376,7 @@ export default function MediaPanel({
             })}
 
             {!loading && videos.length === 0 && (
-              <p className="text-center text-xs text-[#666] py-8">
+              <p className="text-center text-xs text-[#80868b] py-8">
                 No videos yet. Add one above.
               </p>
             )}
@@ -389,13 +389,13 @@ export default function MediaPanel({
             {/* Add image */}
             <div className="flex gap-2">
               <div className="relative flex-1">
-                <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#666]" />
+                <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#80868b]" />
                 <input
                   type="text"
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
                   placeholder="Image URL..."
-                  className="w-full bg-[#141414] border border-[#2a2a2a] rounded-lg pl-8 pr-3 py-2 text-sm text-[#e5e5e5] placeholder-[#666] focus:outline-none focus:border-[#6366f1]/50 transition-colors"
+                  className="w-full bg-[#f8f9fa] border border-[#dadce0] rounded-lg pl-8 pr-3 py-2 text-sm text-[#202124] placeholder-[#80868b] focus:outline-none focus:border-[#1a73e8] focus:bg-white transition-colors"
                   onKeyDown={(e) => e.key === "Enter" && addImage()}
                 />
               </div>
@@ -414,7 +414,7 @@ export default function MediaPanel({
               {images.map((image) => (
                 <div
                   key={image.id}
-                  className="relative group bg-[#141414] border border-[#2a2a2a] rounded-xl overflow-hidden hover:border-[#3a3a3a] transition-colors"
+                  className="relative group bg-[#f8f9fa] border border-[#dadce0] rounded-xl overflow-hidden hover:border-[#1a73e8] transition-colors"
                 >
                   <div className="aspect-square relative">
                     <img
@@ -423,7 +423,7 @@ export default function MediaPanel({
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src =
-                          "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%231e1e1e' width='100' height='100'/%3E%3Ctext x='50' y='55' text-anchor='middle' fill='%23666' font-size='12'%3ENo image%3C/text%3E%3C/svg%3E";
+                          "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23f1f3f4' width='100' height='100'/%3E%3Ctext x='50' y='55' text-anchor='middle' fill='%2380868b' font-size='12'%3ENo image%3C/text%3E%3C/svg%3E";
                       }}
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
@@ -432,7 +432,7 @@ export default function MediaPanel({
                       </button>
                       <button
                         onClick={() => deleteImage(image.id)}
-                        className="p-1.5 rounded-lg bg-black/60 text-[#ef4444] hover:bg-black/80 transition-colors"
+                        className="p-1.5 rounded-lg bg-black/60 text-[#d93025] hover:bg-black/80 transition-colors"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -443,7 +443,7 @@ export default function MediaPanel({
                       {image.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#1e1e1e] text-[10px] text-[#999]"
+                          className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#e8f0fe] text-[10px] text-[#1a73e8]"
                         >
                           <Tag className="h-2.5 w-2.5" />
                           {tag}
@@ -456,7 +456,7 @@ export default function MediaPanel({
             </div>
 
             {!loading && images.length === 0 && (
-              <p className="text-center text-xs text-[#666] py-8">
+              <p className="text-center text-xs text-[#80868b] py-8">
                 No images yet. Add one above.
               </p>
             )}

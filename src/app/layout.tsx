@@ -19,9 +19,24 @@ export default function RootLayout({
           position="top-right"
           toastOptions={{
             style: {
-              background: "#1e1e1e",
-              color: "#e5e5e5",
-              border: "1px solid #2a2a2a",
+              background: "#ffffff",
+              color: "#202124",
+              border: "1px solid #dadce0",
+              borderRadius: "8px",
+              fontSize: "14px",
+              boxShadow: "0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15)",
+            },
+            success: {
+              iconTheme: {
+                primary: "#188038",
+                secondary: "#ffffff",
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: "#d93025",
+                secondary: "#ffffff",
+              },
             },
           }}
         />

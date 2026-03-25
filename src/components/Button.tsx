@@ -15,13 +15,13 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-[#6366f1] text-white hover:bg-[#818cf8] active:bg-[#6366f1] border-transparent",
+    "bg-[#1a73e8] text-white hover:bg-[#1967d2] active:bg-[#185abc] border-transparent",
   secondary:
-    "bg-transparent text-[#e5e5e5] border-[#2a2a2a] hover:border-[#3a3a3a] hover:bg-[#1e1e1e]",
+    "bg-white text-[#202124] border-[#dadce0] hover:bg-[#f1f3f4] hover:border-[#dadce0]",
   danger:
-    "bg-[#ef4444] text-white hover:bg-[#dc2626] active:bg-[#ef4444] border-transparent",
+    "bg-[#d93025] text-white hover:bg-[#c5221f] active:bg-[#b31412] border-transparent",
   ghost:
-    "bg-transparent text-[#999] hover:text-[#e5e5e5] hover:bg-[#1e1e1e] border-transparent",
+    "bg-transparent text-[#5f6368] hover:text-[#202124] hover:bg-[#f1f3f4] border-transparent",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -43,7 +43,7 @@ export default function Button({
   return (
     <button
       disabled={disabled || loading}
-      className={`inline-flex items-center justify-center rounded-lg border font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-[#6366f1]/40 disabled:opacity-50 disabled:cursor-not-allowed ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+      className={`inline-flex items-center justify-center rounded-lg border font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-[#1a73e8]/40 disabled:opacity-50 disabled:cursor-not-allowed ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
       {...rest}
     >
       {loading ? (

@@ -146,17 +146,17 @@ export default function Home() {
 
   const handleCreateClient = async () => {
     const name = prompt("Client name:");
-    if (!name) return;
+    if (!name?.trim()) return;
     try {
       const res = await fetch("/api/clients", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name: name.trim() }),
       });
       const client = await res.json();
       await refreshClients();
       setActiveClientId(client.id);
-      toast.success(`Created "${name}"`);
+      toast.success(`Created "${name.trim()}"`);
     } catch {
       toast.error("Failed to create client");
     }
@@ -176,18 +176,19 @@ export default function Home() {
   const handleCreateProject = async () => {
     if (!activeClientId) return;
     const name = prompt("Project name:");
-    if (!name) return;
-    const type = prompt("Type (UGC, Static, Concept Test, Hook Test):", "UGC") || "UGC";
+    if (!name?.trim()) return;
+    const type = prompt("Type (UGC, Static, Concept Test, Hook Test):", "UGC");
+    if (type === null) return;
     try {
       await fetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, type, clientId: activeClientId }),
+        body: JSON.stringify({ name: name.trim(), type: type.trim() || "UGC", clientId: activeClientId }),
       });
       const res = await fetch(`/api/projects?clientId=${activeClientId}`);
       setProjects(await res.json());
       await refreshClients();
-      toast.success(`Created "${name}"`);
+      toast.success(`Created "${name.trim()}"`);
     } catch {
       toast.error("Failed to create project");
     }
@@ -201,18 +202,18 @@ export default function Home() {
   const handleCreateScript = async () => {
     if (!activeProjectId) return;
     const name = prompt("Script name:");
-    if (!name) return;
+    if (!name?.trim()) return;
     try {
       const res = await fetch("/api/scripts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, projectId: activeProjectId }),
+        body: JSON.stringify({ name: name.trim(), projectId: activeProjectId }),
       });
       const script = await res.json();
       const scriptsRes = await fetch(`/api/scripts?projectId=${activeProjectId}`);
       setScripts(await scriptsRes.json());
       loadScript(script.id);
-      toast.success(`Created "${name}"`);
+      toast.success(`Created "${name.trim()}"`);
     } catch {
       toast.error("Failed to create script");
     }
@@ -245,17 +246,24 @@ export default function Home() {
 
   if (!initialized) {
     return (
-      <div className="flex items-center justify-center h-screen bg-[#0a0a0a]">
+      <div className="flex items-center justify-center h-screen bg-white">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-[#6366f1] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-[#999]">Loading BriefCraft...</p>
+          <div className="w-8 h-8 border-2 border-[#1a73e8] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-[#5f6368]">Loading BriefCraft...</p>
         </div>
       </div>
     );
   }
 
+  const toolbarBtnBase =
+    "p-2 rounded hover:bg-[#f1f3f4] transition-colors";
+  const toolbarBtnInactive =
+    `${toolbarBtnBase} text-[#5f6368] hover:text-[#202124]`;
+  const toolbarBtnActive =
+    `${toolbarBtnBase} text-[#1a73e8] bg-[#e8f0fe]`;
+
   return (
-    <div className="flex h-screen bg-[#0a0a0a] overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       {/* Live Review Bar */}
       {liveReviewActive && (
         <LiveReviewBar isActive={liveReviewActive} onToggle={() => setLiveReviewActive(false)} />
@@ -277,8 +285,8 @@ export default function Home() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Top Bar */}
-        <header className="h-14 border-b border-[#2a2a2a] flex items-center justify-between px-4 bg-[#0a0a0a] shrink-0">
+        {/* Top Bar - Google Docs style */}
+        <header className="h-12 border-b border-[#dadce0] flex items-center justify-between px-4 bg-white shrink-0">
           <div className="flex items-center gap-3">
             {view !== "projects" && (
               <button
@@ -291,60 +299,60 @@ export default function Home() {
                     setView("projects");
                   }
                 }}
-                className="p-1.5 rounded hover:bg-[#1e1e1e] text-[#999] hover:text-[#e5e5e5] transition-colors"
+                className="p-1.5 rounded hover:bg-[#f1f3f4] text-[#5f6368] hover:text-[#202124] transition-colors"
               >
                 <ArrowLeft size={18} />
               </button>
             )}
-            <h1 className="text-sm font-medium text-[#e5e5e5]">
+            <h1 className="text-sm font-medium text-[#202124]">
               {view === "projects" && (clients.find((c) => c.id === activeClientId)?.name || "Select a client")}
               {view === "scripts" && (projects.find((p) => p.id === activeProjectId)?.name || "Project")}
               {view === "editor" && (activeScript?.name || "Script")}
             </h1>
             {view === "editor" && activeScript && (
-              <span className="text-xs px-2 py-0.5 rounded-full bg-[#6366f1]/20 text-[#818cf8]">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-[#e8f0fe] text-[#1a73e8] font-medium">
                 V{activeScript.version}
               </span>
             )}
           </div>
 
-          {/* Action buttons */}
-          <div className="flex items-center gap-1">
+          {/* Action buttons - Google Docs toolbar style */}
+          <div className="flex items-center gap-0.5">
             {view === "editor" && activeScript && (
               <>
                 <button
                   onClick={() => setCommentsOpen(!commentsOpen)}
-                  className={`p-2 rounded hover:bg-[#1e1e1e] transition-colors ${commentsOpen ? "text-[#6366f1]" : "text-[#999]"}`}
+                  className={commentsOpen ? toolbarBtnActive : toolbarBtnInactive}
                   title="Comments"
                 >
                   <MessageSquare size={18} />
                 </button>
                 <button
                   onClick={() => setMediaOpen(!mediaOpen)}
-                  className={`p-2 rounded hover:bg-[#1e1e1e] transition-colors ${mediaOpen ? "text-[#6366f1]" : "text-[#999]"}`}
+                  className={mediaOpen ? toolbarBtnActive : toolbarBtnInactive}
                   title="Media"
                 >
                   <ImageIcon size={18} />
                 </button>
                 <button
                   onClick={() => setAiGenOpen(true)}
-                  className="p-2 rounded hover:bg-[#1e1e1e] text-[#999] hover:text-[#e5e5e5] transition-colors"
+                  className={toolbarBtnInactive}
                   title="AI Generator"
                 >
                   <Sparkles size={18} />
                 </button>
                 <button
                   onClick={() => setVersionsOpen(true)}
-                  className="p-2 rounded hover:bg-[#1e1e1e] text-[#999] hover:text-[#e5e5e5] transition-colors"
+                  className={toolbarBtnInactive}
                   title="Version History"
                 >
                   <History size={18} />
                 </button>
                 <ExportMenu scriptId={activeScript.id} />
-                <div className="w-px h-5 bg-[#2a2a2a] mx-1" />
+                <div className="w-px h-5 bg-[#dadce0] mx-1" />
                 <button
                   onClick={() => setLiveReviewActive(!liveReviewActive)}
-                  className={`p-2 rounded hover:bg-[#1e1e1e] transition-colors ${liveReviewActive ? "text-[#6366f1]" : "text-[#999]"}`}
+                  className={liveReviewActive ? toolbarBtnActive : toolbarBtnInactive}
                   title="Live Review Mode"
                 >
                   <Presentation size={18} />
@@ -355,21 +363,21 @@ export default function Home() {
               <>
                 <button
                   onClick={() => setTemplatesOpen(true)}
-                  className="p-2 rounded hover:bg-[#1e1e1e] text-[#999] hover:text-[#e5e5e5] transition-colors"
+                  className={toolbarBtnInactive}
                   title="Templates"
                 >
                   <LayoutTemplate size={18} />
                 </button>
                 <button
                   onClick={() => setShareOpen(true)}
-                  className="p-2 rounded hover:bg-[#1e1e1e] text-[#999] hover:text-[#e5e5e5] transition-colors"
+                  className={toolbarBtnInactive}
                   title="Share"
                 >
                   <Share2 size={18} />
                 </button>
                 <button
                   onClick={() => setAbTestOpen(true)}
-                  className="p-2 rounded hover:bg-[#1e1e1e] text-[#999] hover:text-[#e5e5e5] transition-colors"
+                  className={toolbarBtnInactive}
                   title="A/B Tests"
                 >
                   <FlaskConical size={18} />
@@ -380,7 +388,7 @@ export default function Home() {
         </header>
 
         {/* Content Area */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto bg-[#f8f9fa]">
           {view === "projects" && (
             <ProjectGrid
               projects={projects}
@@ -390,28 +398,28 @@ export default function Home() {
           )}
 
           {view === "scripts" && (
-            <div className="p-6">
+            <div className="p-6 max-w-5xl mx-auto">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-medium">Scripts</h2>
+                <h2 className="text-lg font-medium text-[#202124]">Scripts</h2>
                 <button
                   onClick={handleCreateScript}
-                  className="px-3 py-1.5 bg-[#6366f1] hover:bg-[#818cf8] text-white text-sm rounded transition-colors"
+                  className="px-4 py-2 bg-[#1a73e8] hover:bg-[#1967d2] text-white text-sm font-medium rounded-md transition-colors shadow-sm"
                 >
                   + New Script
                 </button>
               </div>
               {scripts.length === 0 ? (
                 <div className="text-center py-20">
-                  <p className="text-[#666] mb-4">No scripts yet</p>
+                  <p className="text-[#5f6368] mb-4">No scripts yet</p>
                   <button
                     onClick={handleCreateScript}
-                    className="px-4 py-2 bg-[#6366f1] hover:bg-[#818cf8] text-white text-sm rounded transition-colors"
+                    className="px-4 py-2 bg-[#1a73e8] hover:bg-[#1967d2] text-white text-sm font-medium rounded-md transition-colors shadow-sm"
                   >
                     Create your first script
                   </button>
-                  <p className="text-[#666] text-sm mt-2">
+                  <p className="text-[#80868b] text-sm mt-3">
                     or{" "}
-                    <button onClick={() => setTemplatesOpen(true)} className="text-[#6366f1] hover:underline">
+                    <button onClick={() => setTemplatesOpen(true)} className="text-[#1a73e8] hover:text-[#1967d2] hover:underline">
                       use a template
                     </button>
                   </p>
@@ -422,15 +430,15 @@ export default function Home() {
                     <button
                       key={script.id}
                       onClick={() => loadScript(script.id)}
-                      className="text-left p-4 rounded-lg border border-[#2a2a2a] hover:border-[#3a3a3a] bg-[#141414] hover:bg-[#1e1e1e] transition-all"
+                      className="text-left p-4 rounded-lg border border-[#dadce0] hover:border-[#1a73e8] bg-white hover:shadow-md transition-all"
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium text-sm truncate">{script.name}</h3>
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-[#6366f1]/20 text-[#818cf8] shrink-0 ml-2">
+                        <h3 className="font-medium text-sm text-[#202124] truncate">{script.name}</h3>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-[#e8f0fe] text-[#1a73e8] font-medium shrink-0 ml-2">
                           V{script.version}
                         </span>
                       </div>
-                      <p className="text-xs text-[#666]">
+                      <p className="text-xs text-[#80868b]">
                         Updated {new Date(script.updatedAt).toLocaleDateString()}
                       </p>
                     </button>

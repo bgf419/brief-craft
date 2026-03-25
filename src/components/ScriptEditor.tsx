@@ -10,7 +10,6 @@ import {
   Save,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import Button from "./Button";
 
 interface Row {
   id: string;
@@ -66,7 +65,7 @@ function AutoResizeTextarea({
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       rows={2}
-      className={`w-full bg-transparent border border-transparent hover:border-[#2a2a2a] focus:border-[#6366f1]/50 rounded-lg px-3 py-2 text-sm text-[#e5e5e5] placeholder-[#666] resize-none focus:outline-none transition-colors ${className}`}
+      className={`w-full bg-transparent border-2 border-transparent focus:border-[#1a73e8] rounded px-3 py-2.5 text-sm text-[#202124] placeholder-[#80868b] resize-none focus:outline-none transition-colors leading-relaxed ${className}`}
     />
   );
 }
@@ -216,48 +215,55 @@ export default function ScriptEditor({ script, onUpdate }: ScriptEditorProps) {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#0a0a0a]">
-      {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2a2a] bg-[#0a0a0a]">
-        <div className="flex items-center gap-3">
+    <div className="flex-1 flex flex-col h-full bg-white">
+      {/* Header — Google Docs style title bar */}
+      <div className="flex items-center justify-between px-8 py-5 border-b border-[#dadce0] bg-white">
+        <div className="flex items-center gap-4">
           <input
             type="text"
             value={name}
             onChange={(e) => updateScriptName(e.target.value)}
-            className="bg-transparent text-lg font-semibold text-[#e5e5e5] border-b border-transparent hover:border-[#2a2a2a] focus:border-[#6366f1] focus:outline-none transition-colors px-1 py-0.5"
+            className="bg-transparent text-xl font-normal text-[#202124] border-b-2 border-transparent hover:border-[#dadce0] focus:border-[#1a73e8] focus:outline-none transition-colors px-1 py-1 min-w-[200px]"
+            style={{ fontFamily: "'Google Sans', 'Roboto', Arial, sans-serif" }}
           />
-          <span className="px-2.5 py-0.5 rounded-full bg-[#6366f1]/15 text-[#818cf8] text-xs font-semibold">
+          <span className="px-3 py-1 rounded-full bg-[#e8f0fe] text-[#1a73e8] text-xs font-medium tracking-wide">
             V{script.version}
           </span>
         </div>
-        <Button
-          variant="primary"
-          size="sm"
-          icon={<Save className="h-4 w-4" />}
-          loading={saving}
+        <button
           onClick={saveAll}
+          disabled={saving}
+          className="inline-flex items-center gap-2 px-5 py-2 rounded-md bg-[#1a73e8] text-white text-sm font-medium hover:bg-[#1765cc] active:bg-[#1558b0] disabled:opacity-60 disabled:cursor-not-allowed transition-colors shadow-sm"
         >
+          {saving ? (
+            <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-25" />
+              <path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="opacity-75" />
+            </svg>
+          ) : (
+            <Save className="h-4 w-4" />
+          )}
           Save
-        </Button>
+        </button>
       </div>
 
-      {/* Column headers */}
-      <div className="grid grid-cols-[40px_1fr_1fr_1fr_40px] gap-0 px-6 py-2 border-b border-[#2a2a2a] bg-[#141414]">
-        <div />
-        <div className="px-3 text-xs font-semibold uppercase tracking-wider text-[#666]">
+      {/* Column headers — Google Sheets style */}
+      <div className="grid grid-cols-[44px_1fr_1fr_1fr_44px] gap-0 px-0 border-b border-[#dadce0] bg-[#f8f9fa]">
+        <div className="border-r border-[#dadce0]" />
+        <div className="px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-[#5f6368] border-r border-[#dadce0]">
           Visual / Direction
         </div>
-        <div className="px-3 text-xs font-semibold uppercase tracking-wider text-[#666]">
+        <div className="px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-[#5f6368] border-r border-[#dadce0]">
           Script / Copy
         </div>
-        <div className="px-3 text-xs font-semibold uppercase tracking-wider text-[#666]">
+        <div className="px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-[#5f6368] border-r border-[#dadce0]">
           Notes / Assets
         </div>
         <div />
       </div>
 
       {/* Sections */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto bg-white">
         {sections.map((section) => {
           const isCollapsed = collapsed[section.id];
           const sortedRows = [...section.rows].sort(
@@ -266,14 +272,14 @@ export default function ScriptEditor({ script, onUpdate }: ScriptEditorProps) {
           return (
             <div
               key={section.id}
-              className="border-b border-[#2a2a2a]"
+              className="border-b border-[#dadce0]"
             >
               {/* Section header */}
-              <div className="flex items-center gap-2 px-4 py-2.5 bg-[#141414] border-b border-[#2a2a2a] group">
-                <GripVertical className="h-4 w-4 text-[#666] cursor-grab opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="flex items-center gap-2 px-4 py-3 bg-[#f8f9fa] border-b border-[#dadce0] group">
+                <GripVertical className="h-4 w-4 text-[#dadce0] cursor-grab opacity-0 group-hover:opacity-100 transition-opacity" />
                 <button
                   onClick={() => toggleCollapse(section.id)}
-                  className="p-0.5 rounded text-[#666] hover:text-[#e5e5e5] transition-colors"
+                  className="p-0.5 rounded text-[#5f6368] hover:text-[#202124] hover:bg-[#f1f3f4] transition-colors"
                 >
                   {isCollapsed ? (
                     <ChevronRight className="h-4 w-4" />
@@ -287,11 +293,11 @@ export default function ScriptEditor({ script, onUpdate }: ScriptEditorProps) {
                   onChange={(e) =>
                     updateSectionTitle(section.id, e.target.value)
                   }
-                  className="flex-1 bg-transparent text-sm font-semibold text-[#e5e5e5] border-b border-transparent hover:border-[#2a2a2a] focus:border-[#6366f1] focus:outline-none px-1 py-0.5 transition-colors"
+                  className="flex-1 bg-transparent text-sm font-medium text-[#202124] border-b-2 border-transparent hover:border-[#dadce0] focus:border-[#1a73e8] focus:outline-none px-1 py-0.5 transition-colors"
                 />
                 <button
                   onClick={() => deleteSection(section.id)}
-                  className="p-1 rounded text-[#666] hover:text-[#ef4444] opacity-0 group-hover:opacity-100 transition-all"
+                  className="p-1.5 rounded text-[#dadce0] hover:text-[#d93025] hover:bg-[#fce8e6] opacity-0 group-hover:opacity-100 transition-all"
                   title="Delete section"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
@@ -304,12 +310,12 @@ export default function ScriptEditor({ script, onUpdate }: ScriptEditorProps) {
                   {sortedRows.map((row) => (
                     <div
                       key={row.id}
-                      className="grid grid-cols-[40px_1fr_1fr_1fr_40px] gap-0 border-b border-[#1e1e1e] group/row hover:bg-[#141414]/50 transition-colors"
+                      className="grid grid-cols-[44px_1fr_1fr_1fr_44px] gap-0 border-b border-[#e8eaed] group/row hover:bg-[#f8f9fa] transition-colors"
                     >
-                      <div className="flex items-start justify-center pt-3">
-                        <GripVertical className="h-4 w-4 text-[#666] cursor-grab opacity-0 group-hover/row:opacity-100 transition-opacity" />
+                      <div className="flex items-start justify-center pt-3.5 border-r border-[#e8eaed]">
+                        <GripVertical className="h-4 w-4 text-[#dadce0] cursor-grab opacity-0 group-hover/row:opacity-100 transition-opacity" />
                       </div>
-                      <div className="border-r border-[#1e1e1e] py-1">
+                      <div className="border-r border-[#e8eaed] py-1 bg-white">
                         <AutoResizeTextarea
                           value={row.col1}
                           onChange={(val) =>
@@ -318,7 +324,7 @@ export default function ScriptEditor({ script, onUpdate }: ScriptEditorProps) {
                           placeholder="Visual direction..."
                         />
                       </div>
-                      <div className="border-r border-[#1e1e1e] py-1">
+                      <div className="border-r border-[#e8eaed] py-1 bg-white">
                         <AutoResizeTextarea
                           value={row.col2}
                           onChange={(val) =>
@@ -327,7 +333,7 @@ export default function ScriptEditor({ script, onUpdate }: ScriptEditorProps) {
                           placeholder="Script / copy..."
                         />
                       </div>
-                      <div className="py-1">
+                      <div className="border-r border-[#e8eaed] py-1 bg-white">
                         <AutoResizeTextarea
                           value={row.col3}
                           onChange={(val) =>
@@ -336,10 +342,10 @@ export default function ScriptEditor({ script, onUpdate }: ScriptEditorProps) {
                           placeholder="Notes / assets..."
                         />
                       </div>
-                      <div className="flex items-start justify-center pt-3">
+                      <div className="flex items-start justify-center pt-3.5">
                         <button
                           onClick={() => deleteRow(section.id, row.id)}
-                          className="p-1 rounded text-[#666] hover:text-[#ef4444] opacity-0 group-hover/row:opacity-100 transition-all"
+                          className="p-1.5 rounded text-[#dadce0] hover:text-[#d93025] hover:bg-[#fce8e6] opacity-0 group-hover/row:opacity-100 transition-all"
                           title="Delete row"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -351,7 +357,7 @@ export default function ScriptEditor({ script, onUpdate }: ScriptEditorProps) {
                   {/* Add row */}
                   <button
                     onClick={() => addRow(section.id)}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 text-xs text-[#666] hover:text-[#6366f1] hover:bg-[#141414] transition-colors"
+                    className="w-full flex items-center justify-center gap-2 py-3 text-xs font-medium text-[#5f6368] hover:text-[#1a73e8] hover:bg-[#f8f9fa] transition-colors"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     Add Row
@@ -365,7 +371,7 @@ export default function ScriptEditor({ script, onUpdate }: ScriptEditorProps) {
         {/* Add section */}
         <button
           onClick={addSection}
-          className="w-full flex items-center justify-center gap-2 py-4 text-sm text-[#666] hover:text-[#6366f1] hover:bg-[#141414] border-b border-[#2a2a2a] transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-5 text-sm font-medium text-[#5f6368] hover:text-[#1a73e8] hover:bg-[#f8f9fa] border-b border-[#dadce0] transition-colors"
         >
           <Plus className="h-4 w-4" />
           Add Section

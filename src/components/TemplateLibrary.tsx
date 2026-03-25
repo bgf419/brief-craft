@@ -101,13 +101,13 @@ export default function TemplateLibrary({
         {/* Top bar */}
         <div className="flex items-center gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#666]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#80868b]" />
             <input
               type="text"
               placeholder="Search templates..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg pl-9 pr-3 py-2 text-sm text-[#e5e5e5] placeholder-[#666] focus:outline-none focus:border-[#6366f1]/50 transition-colors"
+              className="w-full bg-[#f8f9fa] border border-[#dadce0] rounded-lg pl-9 pr-3 py-2 text-sm text-[#202124] placeholder-[#80868b] focus:outline-none focus:border-[#1a73e8] transition-colors"
             />
           </div>
           <Button
@@ -124,10 +124,10 @@ export default function TemplateLibrary({
         {/* Grid */}
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-6 w-6 animate-spin text-[#666]" />
+            <Loader2 className="h-6 w-6 animate-spin text-[#80868b]" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-[#666]">
+          <div className="flex flex-col items-center justify-center py-12 text-[#80868b]">
             <BookTemplate className="h-10 w-10 mb-3" />
             <p className="text-sm">No templates found.</p>
           </div>
@@ -136,19 +136,19 @@ export default function TemplateLibrary({
             {filtered.map((template) => (
               <div
                 key={template.id}
-                className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-xl p-4 hover:border-[#3a3a3a] transition-colors"
+                className="bg-[#ffffff] border border-[#dadce0] rounded-xl p-4 hover:border-[#1a73e8] hover:shadow-sm transition-all"
               >
                 <div className="flex items-start justify-between mb-2">
-                  <h4 className="text-sm font-semibold text-[#e5e5e5]">
+                  <h4 className="text-sm font-semibold text-[#202124]">
                     {template.name}
                   </h4>
                   {template.type && (
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#6366f1]/15 text-[#818cf8] font-medium">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#e8f0fe] text-[#1a73e8] font-medium">
                       {template.type}
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-[#666] mb-3 line-clamp-2">
+                <p className="text-xs text-[#5f6368] mb-3 line-clamp-2">
                   {template.description}
                 </p>
                 <Button
