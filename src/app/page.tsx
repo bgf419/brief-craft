@@ -99,6 +99,7 @@ export default function Home() {
   const [expandedProjects, setExpandedProjects] = useState<Record<string, boolean>>({});
   const [contextMenu, setContextMenu] = useState<{ type: string; id: string; x: number; y: number } | null>(null);
   const [newScriptProjectId, setNewScriptProjectId] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
 
   // Panel states
   const [commentsOpen, setCommentsOpen] = useState(false);
@@ -209,7 +210,8 @@ export default function Home() {
   };
 
   const handleCreateClient = async () => {
-    if (!newClientName.trim()) return;
+    if (!newClientName.trim() || creating) return;
+    setCreating(true);
     try {
       const res = await fetch("/api/clients", {
         method: "POST",
@@ -225,11 +227,14 @@ export default function Home() {
       toast.success(`Created "${newClientName.trim()}"`);
     } catch {
       toast.error("Failed to create client");
+    } finally {
+      setCreating(false);
     }
   };
 
   const handleCreateProject = async () => {
-    if (!newProjectName.trim() || !activeClientId) return;
+    if (!newProjectName.trim() || !activeClientId || creating) return;
+    setCreating(true);
     try {
       const res = await fetch("/api/projects", {
         method: "POST",
@@ -244,11 +249,14 @@ export default function Home() {
       toast.success(`Created "${newProjectName.trim()}"`);
     } catch {
       toast.error("Failed to create project");
+    } finally {
+      setCreating(false);
     }
   };
 
   const handleCreateScript = async (projectId: string) => {
-    if (!newScriptName.trim()) return;
+    if (!newScriptName.trim() || creating) return;
+    setCreating(true);
     try {
       const res = await fetch("/api/scripts", {
         method: "POST",
@@ -267,6 +275,8 @@ export default function Home() {
       toast.success(`Created "${newScriptName.trim()}"`);
     } catch {
       toast.error("Failed to create script");
+    } finally {
+      setCreating(false);
     }
   };
 
