@@ -85,7 +85,7 @@ export default function ShareDialog({
         body: JSON.stringify({
           projectId,
           accessLevel,
-          isClientView,
+          clientView: isClientView,
           password: passwordProtected ? password : null,
         }),
       });

@@ -43,12 +43,12 @@ export default function AIGenerator({
       const res = await fetch("/api/ai/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: activeTab, context: context.trim() }),
+        body: JSON.stringify({ type: activeTab.replace(/s$/, ""), context: context.trim() }),
       });
       if (res.ok) {
         const data = await res.json();
-        setResults(data.results || []);
-        if ((data.results || []).length === 0) {
+        setResults(data.suggestions || data.results || []);
+        if ((data.suggestions || data.results || []).length === 0) {
           toast("No results generated. Try rephrasing your input.");
         }
       } else {

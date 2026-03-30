@@ -24,6 +24,10 @@ export async function GET(
       },
       orderBy: { version: "asc" },
       include: {
+        sections: {
+          orderBy: { order: "asc" },
+          include: { rows: { orderBy: { order: "asc" } } },
+        },
         _count: { select: { sections: true, comments: true } },
       },
     });

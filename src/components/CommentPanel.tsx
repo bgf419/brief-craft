@@ -11,11 +11,16 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 
+interface Author {
+  id: string;
+  name: string;
+  avatar?: string | null;
+}
+
 interface Comment {
   id: string;
-  text: string;
-  authorName: string;
-  authorAvatar?: string;
+  content: string;
+  author: Author;
   createdAt: string;
   isResolved: boolean;
   isPinned: boolean;
@@ -68,12 +73,12 @@ function CommentBubble({
     >
       <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-[#f1f3f4] transition-colors">
         <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[#e8f0fe] flex items-center justify-center text-xs font-bold text-[#1a73e8]">
-          {comment.authorName.charAt(0)}
+          {comment.author.name.charAt(0)}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs font-semibold text-[#202124]">
-              {comment.authorName}
+              {comment.author.name}
             </span>
             <span className="text-[10px] text-[#80868b]">
               {timeAgo(comment.createdAt)}
@@ -83,7 +88,7 @@ function CommentBubble({
             )}
           </div>
           <p className="text-sm text-[#5f6368] leading-relaxed whitespace-pre-wrap">
-            {comment.text}
+            {comment.content}
           </p>
           <div className="flex items-center gap-1 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
@@ -144,12 +149,26 @@ export default function CommentPanel({
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showMentions, setShowMentions] = useState(false);
+  const [currentUser, setCurrentUser] = useState<Author | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (!isOpen) return;
+    fetchCurrentUser();
     fetchComments();
   }, [isOpen, scriptId]);
+
+  const fetchCurrentUser = async () => {
+    try {
+      const res = await fetch("/api/users");
+      if (res.ok) {
+        const user = await res.json();
+        setCurrentUser({ id: user.id, name: user.name, avatar: user.avatar });
+      }
+    } catch {
+      // silently fail
+    }
+  };
 
   const fetchComments = async () => {
     setLoading(true);
@@ -167,14 +186,15 @@ export default function CommentPanel({
   };
 
   const handleSubmit = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || !currentUser) return;
     try {
       const res = await fetch("/api/comments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           scriptId,
-          text: input.trim(),
+          content: input.trim(),
+          authorId: currentUser.id,
           parentId: replyingTo,
         }),
       });
@@ -201,6 +221,8 @@ export default function CommentPanel({
   };
 
   const handleResolve = async (id: string) => {
+    const comment = comments.find((c) => c.id === id);
+    const newValue = comment ? !comment.isResolved : true;
     setComments((prev) =>
       prev.map((c) =>
         c.id === id ? { ...c, isResolved: !c.isResolved } : c
@@ -210,7 +232,7 @@ export default function CommentPanel({
       await fetch(`/api/comments/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ toggleResolve: true }),
+        body: JSON.stringify({ isResolved: newValue }),
       });
     } catch {
       toast.error("Failed to update");
@@ -218,6 +240,8 @@ export default function CommentPanel({
   };
 
   const handlePin = async (id: string) => {
+    const comment = comments.find((c) => c.id === id);
+    const newValue = comment ? !comment.isPinned : true;
     setComments((prev) =>
       prev.map((c) => (c.id === id ? { ...c, isPinned: !c.isPinned } : c))
     );
@@ -225,7 +249,7 @@ export default function CommentPanel({
       await fetch(`/api/comments/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ togglePin: true }),
+        body: JSON.stringify({ isPinned: newValue }),
       });
     } catch {
       toast.error("Failed to update");

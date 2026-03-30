@@ -108,8 +108,7 @@ export default function ABTestPanel({
           projectId,
           name: formName.trim(),
           platform: formPlatform,
-          scriptAId: formScriptA,
-          scriptBId: formScriptB,
+          scriptIds: [formScriptA, formScriptB],
         }),
       });
       if (res.ok) {
@@ -132,11 +131,9 @@ export default function ABTestPanel({
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          metrics: {
-            roas: editRoas ? parseFloat(editRoas) : undefined,
-            ctr: editCtr ? parseFloat(editCtr) : undefined,
-            cvr: editCvr ? parseFloat(editCvr) : undefined,
-          },
+          roas: editRoas ? parseFloat(editRoas) : undefined,
+          ctr: editCtr ? parseFloat(editCtr) : undefined,
+          cvr: editCvr ? parseFloat(editCvr) : undefined,
         }),
       });
       setTests((prev) =>

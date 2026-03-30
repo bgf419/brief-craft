@@ -2,6 +2,23 @@
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import {
   Plus,
   ChevronDown,
   ChevronRight,
@@ -70,6 +87,102 @@ function AutoResizeTextarea({
   );
 }
 
+function SortableRow({
+  row,
+  sectionId,
+  onUpdateCell,
+  onDelete,
+}: {
+  row: Row;
+  sectionId: string;
+  onUpdateCell: (rowId: string, col: "col1" | "col2" | "col3", val: string) => void;
+  onDelete: (rowId: string) => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: row.id });
+  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
+  return (
+    <div ref={setNodeRef} style={style} className="grid grid-cols-[44px_1fr_1fr_1fr_44px] gap-0 border-b border-[#e8eaed] group/row hover:bg-[#f8f9fa] transition-colors">
+      <div className="flex items-start justify-center pt-3.5 border-r border-[#e8eaed]" {...attributes} {...listeners}>
+        <GripVertical className="h-4 w-4 text-[#dadce0] cursor-grab opacity-0 group-hover/row:opacity-100 transition-opacity" />
+      </div>
+      <div className="border-r border-[#e8eaed] py-1 bg-white">
+        <AutoResizeTextarea value={row.col1} onChange={(val) => onUpdateCell(row.id, "col1", val)} placeholder="Visual direction..." />
+      </div>
+      <div className="border-r border-[#e8eaed] py-1 bg-white">
+        <AutoResizeTextarea value={row.col2} onChange={(val) => onUpdateCell(row.id, "col2", val)} placeholder="Script / copy..." />
+      </div>
+      <div className="border-r border-[#e8eaed] py-1 bg-white">
+        <AutoResizeTextarea value={row.col3} onChange={(val) => onUpdateCell(row.id, "col3", val)} placeholder="Notes / assets..." />
+      </div>
+      <div className="flex items-start justify-center pt-3.5">
+        <button onClick={() => onDelete(row.id)} className="p-1.5 rounded text-[#dadce0] hover:text-[#d93025] hover:bg-[#fce8e6] opacity-0 group-hover/row:opacity-100 transition-all" title="Delete row">
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function SortableSection({
+  section,
+  isCollapsed,
+  onToggleCollapse,
+  onUpdateTitle,
+  onDeleteSection,
+  onUpdateRowCell,
+  onAddRow,
+  onDeleteRow,
+  onRowDragEnd,
+  sensors,
+}: {
+  section: Section;
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
+  onUpdateTitle: (title: string) => void;
+  onDeleteSection: () => void;
+  onUpdateRowCell: (rowId: string, col: "col1" | "col2" | "col3", val: string) => void;
+  onAddRow: () => void;
+  onDeleteRow: (rowId: string) => void;
+  onRowDragEnd: (event: DragEndEvent) => void;
+  sensors: ReturnType<typeof useSensors>;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: section.id });
+  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
+  const sortedRows = [...section.rows].sort((a, b) => a.order - b.order);
+
+  return (
+    <div ref={setNodeRef} style={style} className="border-b border-[#dadce0]">
+      <div className="flex items-center gap-2 px-4 py-3 bg-[#f8f9fa] border-b border-[#dadce0] group">
+        <div {...attributes} {...listeners}>
+          <GripVertical className="h-4 w-4 text-[#dadce0] cursor-grab opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
+        <button onClick={onToggleCollapse} className="p-0.5 rounded text-[#5f6368] hover:text-[#202124] hover:bg-[#f1f3f4] transition-colors">
+          {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+        </button>
+        <input type="text" value={section.title} onChange={(e) => onUpdateTitle(e.target.value)} className="flex-1 bg-transparent text-sm font-medium text-[#202124] border-b-2 border-transparent hover:border-[#dadce0] focus:border-[#1a73e8] focus:outline-none px-1 py-0.5 transition-colors" />
+        <button onClick={onDeleteSection} className="p-1.5 rounded text-[#dadce0] hover:text-[#d93025] hover:bg-[#fce8e6] opacity-0 group-hover:opacity-100 transition-all" title="Delete section">
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
+      </div>
+      {!isCollapsed && (
+        <div>
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onRowDragEnd}>
+            <SortableContext items={sortedRows.map((r) => r.id)} strategy={verticalListSortingStrategy}>
+              {sortedRows.map((row) => (
+                <SortableRow key={row.id} row={row} sectionId={section.id} onUpdateCell={onUpdateRowCell} onDelete={onDeleteRow} />
+              ))}
+            </SortableContext>
+          </DndContext>
+          <button onClick={onAddRow} className="w-full flex items-center justify-center gap-2 py-3 text-xs font-medium text-[#5f6368] hover:text-[#1a73e8] hover:bg-[#f8f9fa] transition-colors">
+            <Plus className="h-3.5 w-3.5" />
+            Add Row
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function ScriptEditor({ script, onUpdate }: ScriptEditorProps) {
   const [name, setName] = useState(script.name);
   const [sections, setSections] = useState<Section[]>(
@@ -77,12 +190,17 @@ export default function ScriptEditor({ script, onUpdate }: ScriptEditorProps) {
   );
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const [saving, setSaving] = useState(false);
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimers = useRef<Record<string, NodeJS.Timeout>>({});
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
 
   const debouncedSave = useCallback(
-    async (endpoint: string, body: object) => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      debounceRef.current = setTimeout(async () => {
+    (endpoint: string, body: object) => {
+      if (debounceTimers.current[endpoint]) clearTimeout(debounceTimers.current[endpoint]);
+      debounceTimers.current[endpoint] = setTimeout(async () => {
         try {
           await fetch(endpoint, {
             method: "PUT",
@@ -96,6 +214,43 @@ export default function ScriptEditor({ script, onUpdate }: ScriptEditorProps) {
     },
     []
   );
+
+  const handleSectionDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = sections.findIndex((s) => s.id === active.id);
+    const newIndex = sections.findIndex((s) => s.id === over.id);
+    const reordered = arrayMove(sections, oldIndex, newIndex).map((s, i) => ({ ...s, order: i }));
+    setSections(reordered);
+    try {
+      await fetch("/api/sections/reorder", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sections: reordered.map((s) => ({ id: s.id, order: s.order })) }),
+      });
+    } catch {
+      toast.error("Failed to reorder sections");
+    }
+  };
+
+  const handleRowDragEnd = async (sectionId: string, event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    setSections((prev) =>
+      prev.map((s) => {
+        if (s.id !== sectionId) return s;
+        const oldIndex = s.rows.findIndex((r) => r.id === active.id);
+        const newIndex = s.rows.findIndex((r) => r.id === over.id);
+        const reordered = arrayMove(s.rows, oldIndex, newIndex).map((r, i) => ({ ...r, order: i }));
+        fetch("/api/rows/reorder", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ rows: reordered.map((r) => ({ id: r.id, order: r.order })) }),
+        }).catch(() => toast.error("Failed to reorder rows"));
+        return { ...s, rows: reordered };
+      })
+    );
+  };
 
   const updateScriptName = (newName: string) => {
     setName(newName);
@@ -264,109 +419,25 @@ export default function ScriptEditor({ script, onUpdate }: ScriptEditorProps) {
 
       {/* Sections */}
       <div className="flex-1 overflow-y-auto bg-white">
-        {sections.map((section) => {
-          const isCollapsed = collapsed[section.id];
-          const sortedRows = [...section.rows].sort(
-            (a, b) => a.order - b.order
-          );
-          return (
-            <div
-              key={section.id}
-              className="border-b border-[#dadce0]"
-            >
-              {/* Section header */}
-              <div className="flex items-center gap-2 px-4 py-3 bg-[#f8f9fa] border-b border-[#dadce0] group">
-                <GripVertical className="h-4 w-4 text-[#dadce0] cursor-grab opacity-0 group-hover:opacity-100 transition-opacity" />
-                <button
-                  onClick={() => toggleCollapse(section.id)}
-                  className="p-0.5 rounded text-[#5f6368] hover:text-[#202124] hover:bg-[#f1f3f4] transition-colors"
-                >
-                  {isCollapsed ? (
-                    <ChevronRight className="h-4 w-4" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4" />
-                  )}
-                </button>
-                <input
-                  type="text"
-                  value={section.title}
-                  onChange={(e) =>
-                    updateSectionTitle(section.id, e.target.value)
-                  }
-                  className="flex-1 bg-transparent text-sm font-medium text-[#202124] border-b-2 border-transparent hover:border-[#dadce0] focus:border-[#1a73e8] focus:outline-none px-1 py-0.5 transition-colors"
-                />
-                <button
-                  onClick={() => deleteSection(section.id)}
-                  className="p-1.5 rounded text-[#dadce0] hover:text-[#d93025] hover:bg-[#fce8e6] opacity-0 group-hover:opacity-100 transition-all"
-                  title="Delete section"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
-              </div>
-
-              {/* Rows */}
-              {!isCollapsed && (
-                <div>
-                  {sortedRows.map((row) => (
-                    <div
-                      key={row.id}
-                      className="grid grid-cols-[44px_1fr_1fr_1fr_44px] gap-0 border-b border-[#e8eaed] group/row hover:bg-[#f8f9fa] transition-colors"
-                    >
-                      <div className="flex items-start justify-center pt-3.5 border-r border-[#e8eaed]">
-                        <GripVertical className="h-4 w-4 text-[#dadce0] cursor-grab opacity-0 group-hover/row:opacity-100 transition-opacity" />
-                      </div>
-                      <div className="border-r border-[#e8eaed] py-1 bg-white">
-                        <AutoResizeTextarea
-                          value={row.col1}
-                          onChange={(val) =>
-                            updateRowCell(section.id, row.id, "col1", val)
-                          }
-                          placeholder="Visual direction..."
-                        />
-                      </div>
-                      <div className="border-r border-[#e8eaed] py-1 bg-white">
-                        <AutoResizeTextarea
-                          value={row.col2}
-                          onChange={(val) =>
-                            updateRowCell(section.id, row.id, "col2", val)
-                          }
-                          placeholder="Script / copy..."
-                        />
-                      </div>
-                      <div className="border-r border-[#e8eaed] py-1 bg-white">
-                        <AutoResizeTextarea
-                          value={row.col3}
-                          onChange={(val) =>
-                            updateRowCell(section.id, row.id, "col3", val)
-                          }
-                          placeholder="Notes / assets..."
-                        />
-                      </div>
-                      <div className="flex items-start justify-center pt-3.5">
-                        <button
-                          onClick={() => deleteRow(section.id, row.id)}
-                          className="p-1.5 rounded text-[#dadce0] hover:text-[#d93025] hover:bg-[#fce8e6] opacity-0 group-hover/row:opacity-100 transition-all"
-                          title="Delete row"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-
-                  {/* Add row */}
-                  <button
-                    onClick={() => addRow(section.id)}
-                    className="w-full flex items-center justify-center gap-2 py-3 text-xs font-medium text-[#5f6368] hover:text-[#1a73e8] hover:bg-[#f8f9fa] transition-colors"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                    Add Row
-                  </button>
-                </div>
-              )}
-            </div>
-          );
-        })}
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleSectionDragEnd}>
+          <SortableContext items={sections.map((s) => s.id)} strategy={verticalListSortingStrategy}>
+            {sections.map((section) => (
+              <SortableSection
+                key={section.id}
+                section={section}
+                isCollapsed={!!collapsed[section.id]}
+                onToggleCollapse={() => toggleCollapse(section.id)}
+                onUpdateTitle={(title) => updateSectionTitle(section.id, title)}
+                onDeleteSection={() => deleteSection(section.id)}
+                onUpdateRowCell={(rowId, col, val) => updateRowCell(section.id, rowId, col, val)}
+                onAddRow={() => addRow(section.id)}
+                onDeleteRow={(rowId) => deleteRow(section.id, rowId)}
+                onRowDragEnd={(event) => handleRowDragEnd(section.id, event)}
+                sensors={sensors}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
 
         {/* Add section */}
         <button

@@ -82,12 +82,30 @@ export default function MediaPanel({
     setLoading(true);
     try {
       const params = rowId ? `?rowId=${rowId}` : "";
-      const [vRes, iRes] = await Promise.all([
-        fetch(`/api/media/videos${params}`),
-        fetch(`/api/media/images${params}`),
-      ]);
-      if (vRes.ok) setVideos(await vRes.json());
-      if (iRes.ok) setImages(await iRes.json());
+      const res = await fetch(`/api/assets${params}`);
+      if (res.ok) {
+        const assets = await res.json();
+        setVideos(
+          assets
+            .filter((a: { type: string }) => a.type === "video")
+            .map((a: { id: string; url: string; name?: string; note?: string }) => ({
+              id: a.id,
+              url: a.url,
+              title: a.name || a.url,
+              annotations: a.note ? JSON.parse(a.note) : [],
+            }))
+        );
+        setImages(
+          assets
+            .filter((a: { type: string }) => a.type === "image")
+            .map((a: { id: string; url: string; tags?: string }) => ({
+              id: a.id,
+              url: a.url,
+              tags: a.tags ? JSON.parse(a.tags) : [],
+              order: 0,
+            }))
+        );
+      }
     } catch {
       // silently fail
     } finally {
@@ -99,14 +117,29 @@ export default function MediaPanel({
     if (!videoUrl.trim()) return;
     setAddingVideo(true);
     try {
-      const res = await fetch("/api/media/videos", {
+      const url = videoUrl.trim();
+      const res = await fetch("/api/assets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: videoUrl.trim(), rowId }),
+        body: JSON.stringify({
+          name: url,
+          url,
+          type: "video",
+          note: "[]",
+          rowId,
+        }),
       });
       if (res.ok) {
         const data = await res.json();
-        setVideos((prev) => [...prev, data]);
+        setVideos((prev) => [
+          ...prev,
+          {
+            id: data.id,
+            url: data.url,
+            title: data.name || data.url,
+            annotations: [],
+          },
+        ]);
         setVideoUrl("");
         toast.success("Video added");
       }
@@ -120,20 +153,24 @@ export default function MediaPanel({
   const addAnnotation = async (videoId: string) => {
     if (!annotationTimestamp.trim() || !annotationNote.trim()) return;
     try {
-      const res = await fetch(`/api/media/videos/${videoId}/annotations`, {
-        method: "POST",
+      const video = videos.find((v) => v.id === videoId);
+      if (!video) return;
+      const newAnnotation = {
+        id: crypto.randomUUID(),
+        timestamp: annotationTimestamp.trim(),
+        note: annotationNote.trim(),
+      };
+      const updatedAnnotations = [...video.annotations, newAnnotation];
+      const res = await fetch(`/api/assets/${videoId}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          timestamp: annotationTimestamp.trim(),
-          note: annotationNote.trim(),
-        }),
+        body: JSON.stringify({ note: JSON.stringify(updatedAnnotations) }),
       });
       if (res.ok) {
-        const data = await res.json();
         setVideos((prev) =>
           prev.map((v) =>
             v.id === videoId
-              ? { ...v, annotations: [...v.annotations, data] }
+              ? { ...v, annotations: updatedAnnotations }
               : v
           )
         );
@@ -151,14 +188,29 @@ export default function MediaPanel({
     if (!imageUrl.trim()) return;
     setAddingImage(true);
     try {
-      const res = await fetch("/api/media/images", {
+      const url = imageUrl.trim();
+      const res = await fetch("/api/assets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: imageUrl.trim(), rowId }),
+        body: JSON.stringify({
+          name: url,
+          url,
+          type: "image",
+          tags: [],
+          rowId,
+        }),
       });
       if (res.ok) {
         const data = await res.json();
-        setImages((prev) => [...prev, data]);
+        setImages((prev) => [
+          ...prev,
+          {
+            id: data.id,
+            url: data.url,
+            tags: data.tags ? JSON.parse(data.tags) : [],
+            order: 0,
+          },
+        ]);
         setImageUrl("");
         toast.success("Image added");
       }
@@ -171,7 +223,7 @@ export default function MediaPanel({
 
   const deleteVideo = async (id: string) => {
     try {
-      await fetch(`/api/media/videos/${id}`, { method: "DELETE" });
+      await fetch(`/api/assets/${id}`, { method: "DELETE" });
       setVideos((prev) => prev.filter((v) => v.id !== id));
       toast.success("Video removed");
     } catch {
@@ -181,7 +233,7 @@ export default function MediaPanel({
 
   const deleteImage = async (id: string) => {
     try {
-      await fetch(`/api/media/images/${id}`, { method: "DELETE" });
+      await fetch(`/api/assets/${id}`, { method: "DELETE" });
       setImages((prev) => prev.filter((i) => i.id !== id));
       toast.success("Image removed");
     } catch {
